@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ESS-Agent 底层架构总纲</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+  <div class="header-bar"></div>
+  <h1>ESS-Agent 底层架构总纲</h1>
+  <p class="subtitle">"一体 · 双核 · 四层 · 九功能" 体系</p>
+</header>
+
+<!-- Main Architecture -->
+<main class="main-container">
+
+  <!-- One Body Banner -->
+  <section class="one-body" id="one-body">
+    <div class="body-icon">🧠</div>
+    <div class="body-content">
+      <h2>一体：ESS-Agent 全线智能体</h2>
+      <p>立足小流域生态环境第三方管理与治理，驱动适应性管理闭环的智能中枢。最高演化目标：维持水生态系统高韧性 "稳态（State）"</p>
+      <p class="core-idea">核心理念：在线运行与离线进化的统一生命体。实现"生态理水、科学治水、系统管水"的最优策略组合。</p>
+    </div>
+  </section>
+
+  <!-- Dual Core System -->
+  <section class="dual-core">
+    <h2 class="section-title" id="dual-core-title">双核系统</h2>
+    <div class="dual-core-layout">
+
+      <!-- MCP -->
+      <div class="core-card mcp-card" id="mcp-card">
+        <div class="core-header mcp-header">
+          <h3>在线中枢 ESS-MCP</h3>
+          <span class="badge badge-mcp">实时 · 秒级到分钟级</span>
+        </div>
+        <p class="core-desc">全部在线行为的掌管者、中央神经系统与标准化通信桥梁</p>
+        <div class="modules">
+          <div class="module-item" data-detail="m-cog">
+            <span class="module-tag tag-m">M_Cog</span>
+            <div>
+              <strong>M - 认知引擎</strong>
+              <p>LLM/视觉大模型意图解析与任务转化</p>
+            </div>
+          </div>
+          <div class="module-item" data-detail="c-ctx">
+            <span class="module-tag tag-c">C_Ctx</span>
+            <div>
+              <strong>C - 生态态势上下文</strong>
+              <p>全息注入光谱、图网络、水文数据</p>
+            </div>
+          </div>
+          <div class="module-item" data-detail="p-proto">
+            <span class="module-tag tag-p">P_Proto</span>
+            <div>
+              <strong>P - 标准化协议</strong>
+              <p>九大功能模块标准化挂载与智能调度</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Data Flow -->
+      <div class="data-flow" id="data-flow">
+        <div class="flow-arrow flow-right">
+          <div class="flow-label">
+            <strong>DataBack</strong>
+            <span>产出监测日志、偏差记录、评估报告 → 异步汇入数据湖</span>
+          </div>
+          <div class="arrow-line">
+            <div class="arrow-particle p1"></div>
+            <div class="arrow-particle p2"></div>
+            <div class="arrow-particle p3"></div>
+          </div>
+        </div>
+        <div class="flow-center-label">MCP ↔ 数据流（数据回流）</div>
+        <div class="flow-arrow flow-left">
+          <div class="flow-label">
+            <strong>能力反哺</strong>
+            <span>触发离线训练流水线</span>
+          </div>
+          <div class="arrow-line reverse">
+            <div class="arrow-particle p1"></div>
+            <div class="arrow-particle p2"></div>
+            <div class="arrow-particle p3"></div>
+          </div>
+        </div>
+        <div class="flow-arrow flow-left">
+          <div class="flow-label">
+            <strong>ModelUpdate</strong>
+            <span>推送更新后的模型权重与策略网络</span>
+          </div>
+          <div class="arrow-line reverse">
+            <div class="arrow-particle p1"></div>
+            <div class="arrow-particle p2"></div>
+            <div class="arrow-particle p3"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- WPT -->
+      <div class="core-card wpt-card" id="wpt-card">
+        <div class="core-header wpt-header">
+          <h3>离线引擎 ESS-WPT</h3>
+          <span class="badge badge-wpt">进化 · 天级到周级</span>
+        </div>
+        <p class="core-desc">下一次该做得更好：持续进化引擎，第一性原理：课程化蒸馏环境常识</p>
+        <div class="wpt-responsibilities">
+          <div class="resp-item" data-resp="1">
+            <span class="resp-num">Resp1</span>
+            <div>
+              <strong>1. 世界模型训练：蒸馏环境结构</strong>
+              <p>ST-GCN拓扑重构、JEPA表征更新、数字表象课程迁移</p>
+            </div>
+          </div>
+          <div class="resp-item" data-resp="2">
+            <span class="resp-num">Resp2</span>
+            <div>
+              <strong>2. 灰盒对齐：蒸馏物理因果</strong>
+              <p>SWAT仿标签课程化注入 + 实测对比学习</p>
+            </div>
+          </div>
+          <div class="resp-item" data-resp="3">
+            <span class="resp-num">Resp3</span>
+            <div>
+              <strong>3. 强化学习优化：蒸馏干预规律</strong>
+              <p>SIMA式多任务交互训练、策略网络更新</p>
+            </div>
+          </div>
+          <div class="resp-item" data-resp="4">
+            <span class="resp-num">Resp4</span>
+            <div>
+              <strong>4. 持续学习：校准蒸馏偏差</strong>
+              <p>漂移检测、课程分布调整、增量更新</p>
+            </div>
+          </div>
+          <div class="resp-item" data-resp="5">
+            <span class="resp-num">Resp5</span>
+            <div>
+              <strong>5. 能力反哺：交付蒸馏成果</strong>
+              <p>模型权重推送、MCP热加载</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Four Layers & Nine Skills -->
+  <section class="layers-section">
+    <h2 class="section-title">认知结构：四层技术架构 & 九大功能模块（Skill 1-9）</h2>
+    <p class="section-subtitle">自下而上递进，形成逻辑闭环，在线数据异步流入WPT驱动进化</p>
+
+    <div class="layers-container">
+
+      <!-- L4 -->
+      <div class="layer-row" data-layer="4">
+        <div class="layer-label l4-bg">
+          <span class="layer-id">L4</span>
+          <div>
+            <strong>交互与适应层（Interaction）</strong>
+            <p>功能：实现系统管水与适应性闭环</p>
+          </div>
+        </div>
+        <div class="layer-tech">
+          <div class="tech-box">
+            <span class="tech-title">核心技术</span>
+            <span>领域微调 LLM</span>
+          </div>
+          <div class="tech-box">
+            <span class="tech-title">在线性进化的对象</span>
+            <span>训练数据采集</span>
+          </div>
+          <div class="layer-connector">生成基于"最小能量"的修复策略</div>
+        </div>
+        <div class="layer-skills">
+          <div class="skill-card" data-skill="8">
+            <h4>Skill 8：适应性管理</h4>
+            <ul>
+              <li>策略校正机制</li>
+              <li>阈值监警系统</li>
+              <li>方案迭代引擎</li>
+            </ul>
+          </div>
+          <div class="skill-card" data-skill="9">
+            <h4>Skill 9：MVR评估</h4>
+            <ul>
+              <li>监测·核查·报告</li>
+              <li>四维效果检查（水质/措施/成本/生态）</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- L3 -->
+      <div class="layer-row" data-layer="3">
+        <div class="layer-label l3-bg">
+          <span class="layer-id">L3</span>
+          <div>
+            <strong>决策与干预层（Action）</strong>
+            <p>功能：落实生态理水原则</p>
+          </div>
+        </div>
+        <div class="layer-tech">
+          <div class="tech-box">
+            <span class="tech-title">核心技术</span>
+            <span>灰盒模型 + RL</span>
+          </div>
+          <div class="tech-box">
+            <span class="tech-title">在线性进化的对象</span>
+            <span>策略网络参数更新</span>
+          </div>
+          <div class="layer-connector">重构流域世界模型与科学归因</div>
+        </div>
+        <div class="layer-skills">
+          <div class="skill-card" data-skill="6">
+            <h4>Skill 6：总量分配</h4>
+            <ul>
+              <li>TMDL约束下削减任务合理分配</li>
+              <li>支持等比例/边际成本/公平性等策略</li>
+            </ul>
+          </div>
+          <div class="skill-card" data-skill="7">
+            <h4>Skill 7：情景优化</h4>
+            <ul>
+              <li>强化学习搜索成本最优BMP组合方案</li>
+              <li>在线快速推理/离线大规模推演</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- L2 -->
+      <div class="layer-row" data-layer="2">
+        <div class="layer-label l2-bg">
+          <span class="layer-id">L2</span>
+          <div>
+            <strong>认知与推演层（Cognition）</strong>
+            <p>功能：赋能科学治水</p>
+          </div>
+        </div>
+        <div class="layer-tech">
+          <div class="tech-box">
+            <span class="tech-title">核心技术</span>
+            <span>ST-GCN（时空图卷积网络）+ 世界模型拓扑</span>
+          </div>
+          <div class="tech-box">
+            <span class="tech-title">在线性进化的对象</span>
+            <span>—</span>
+          </div>
+          <div class="layer-connector">确立物理坐标底座与全息态势</div>
+        </div>
+        <div class="layer-skills">
+          <div class="skill-card" data-skill="3">
+            <h4>Skill 3：关键源区识别</h4>
+            <ul>
+              <li>多因子风险评估</li>
+              <li>筛选高风险污染贡献区(CSA)</li>
+            </ul>
+          </div>
+          <div class="skill-card" data-skill="4">
+            <h4>Skill 4：负荷核算与生态流量约束提取</h4>
+            <ul>
+              <li>SCS-CN产流+EMC法估算非点源负荷</li>
+              <li>提取生态流量约束指标(Qq, dQp, Qb)</li>
+            </ul>
+          </div>
+          <div class="skill-card" data-skill="5">
+            <h4>Skill 5：污染溯源</h4>
+            <ul>
+              <li>空间/源类型/责任主体三维分解归因</li>
+              <li>生成水文响应单元</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- L1 -->
+      <div class="layer-row" data-layer="1">
+        <div class="layer-label l1-bg">
+          <span class="layer-id">L1</span>
+          <div>
+            <strong>全谱感知层（Perception）</strong>
+            <p>功能：确立系统态势，超越离散监测指标</p>
+          </div>
+        </div>
+        <div class="layer-tech">
+          <div class="tech-box">
+            <span class="tech-title">核心技术</span>
+            <span>3D-CNN / ViT</span>
+          </div>
+          <div class="tech-box">
+            <span class="tech-title">在线性进化的对象</span>
+            <span>视觉模型权重</span>
+          </div>
+        </div>
+        <div class="layer-skills">
+          <div class="skill-card" data-skill="1">
+            <h4>Skill 1：流域划分</h4>
+            <ul>
+              <li>DEM水文分析、河网提取、子流域划分</li>
+              <li>确立河网拓扑边界</li>
+            </ul>
+          </div>
+          <div class="skill-card" data-skill="2">
+            <h4>Skill 2：HRU提取</h4>
+            <ul>
+              <li>土地利用 + 土壤 × 坡度叠加</li>
+              <li>生成水文响应单元</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- Detail Modal -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" id="modal">
+    <button class="modal-close" id="modal-close">&times;</button>
+    <h3 id="modal-title"></h3>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<!-- Navigation dots -->
+<nav class="side-nav">
+  <a href="#one-body" class="nav-dot active" data-label="一体" title="一体"></a>
+  <a href="#dual-core-title" class="nav-dot" data-label="双核" title="双核"></a>
+  <a href="#" class="nav-dot" data-label="四层" title="四层九功能" onclick="document.querySelector('.layers-section').scrollIntoView({behavior:'smooth'});return false;"></a>
+</nav>
+
+<script src="app.js"></script>
+</body>
+</html>
