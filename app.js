@@ -361,11 +361,167 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // --- KPI Live Dashboard ---
+  const kpi = {
+    tasks: document.getElementById('kpi-tasks'),
+    latency: document.getElementById('kpi-latency'),
+    version: document.getElementById('kpi-version'),
+    data: document.getElementById('kpi-data')
+  };
+  const state = {
+    tasks: 128,
+    latency: 42,
+    major: 3, minor: 12, patch: 7,
+    data: 18.4,
+    running: false
+  };
+  function fmtVersion() { return `v${state.major}.${state.minor}.${state.patch}`; }
+  function renderKpi() {
+    if (kpi.tasks) kpi.tasks.textContent = state.tasks;
+    if (kpi.latency) kpi.latency.innerHTML = `${state.latency}<span class="kpi-unit">ms</span>`;
+    if (kpi.version) kpi.version.textContent = fmtVersion();
+    if (kpi.data) kpi.data.innerHTML = `${state.data.toFixed(1)}<span class="kpi-unit">TB</span>`;
+  }
+  renderKpi();
+  setInterval(() => {
+    if (state.running) return;
+    state.tasks += Math.floor(Math.random() * 5) - 2;
+    if (state.tasks < 100) state.tasks = 100 + Math.floor(Math.random() * 20);
+    if (state.tasks > 200) state.tasks = 180;
+    state.latency = 30 + Math.floor(Math.random() * 40);
+    state.data = Math.min(99.9, state.data + Math.random() * 0.05);
+    renderKpi();
+  }, 2000);
+
+  // --- Workflow Simulator ---
+  const presets = {
+    'water-quality': {
+      prompt: '分析A流域COD超标原因，并给出成本最优BMP组合削减方案。',
+      skills: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+      ctx: '注入 Landsat-9光谱 + 12站点实测数据 + SWAT先验图',
+      output: '识别3处CSA高风险区；推荐BMP组合：植被缓冲带+沉淀池+精准施肥；预期COD削减32.7%；总成本￥482万'
+    },
+    'flood': {
+      prompt: '未来72小时可能出现极端降雨，评估流域生态流量风险并制定预警方案。',
+      skills: [1, 2, 4, 7, 8, 9],
+      ctx: '注入 GFS气象预报 + 水位实时监测 + 历史洪水事件库',
+      output: '预测洪峰流量 186 m³/s (超Qp阈值18%)；生成三级预警；启动闸门调度预案；推送至应急平台'
+    },
+    'tmdl': {
+      prompt: '为B流域TN指标制定年度TMDL削减方案，兼顾公平性和经济性。',
+      skills: [1, 2, 3, 4, 6, 7, 9],
+      ctx: '注入 土地利用矢量 + 土壤数据库 + 经济区划图',
+      output: 'TMDL总削减量：1247 t/a；按边际成本法分配至17个子区；Pareto前沿生成3套方案；节省成本￥1120万'
+    }
+  };
+
+  const pipeSteps = document.querySelectorAll('.pipe-step');
+  const pipeSkills = document.querySelectorAll('.pipe-skill');
+  const consoleBody = document.getElementById('console-body');
+  const simStatus = document.getElementById('sim-status');
+  const simPrompt = document.getElementById('sim-prompt');
+  const runBtn = document.getElementById('sim-run');
+  const resetBtn = document.getElementById('sim-reset');
+  const presetBtns = document.querySelectorAll('.preset-btn');
+
+  let currentPreset = 'water-quality';
+
+  presetBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (state.running) return;
+      presetBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentPreset = btn.dataset.preset;
+      simPrompt.value = presets[currentPreset].prompt;
+    });
+  });
+
+  function log(msg, type = 'info') {
+    const line = document.createElement('div');
+    line.className = `console-line console-${type}`;
+    const time = new Date().toLocaleTimeString('zh-CN', { hour12: false });
+    line.textContent = `[${time}] ${msg}`;
+    consoleBody.appendChild(line);
+    consoleBody.scrollTop = consoleBody.scrollHeight;
+  }
+
+  function resetSim() {
+    pipeSteps.forEach(s => s.classList.remove('active', 'done'));
+    pipeSkills.forEach(s => s.classList.remove('active', 'done'));
+    consoleBody.innerHTML = '<div class="console-line console-info">[系统] 等待任务启动...</div>';
+    simStatus.textContent = '待命';
+    simStatus.className = 'sim-status';
+  }
+
+  resetBtn.addEventListener('click', () => {
+    if (state.running) return;
+    resetSim();
+  });
+
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+
+  async function activate(selector, label, detail) {
+    const el = typeof selector === 'string' ? document.querySelector(selector) : selector;
+    if (!el) return;
+    el.classList.add('active');
+    log(`${label}  ${detail}`, 'step');
+    await wait(700);
+    el.classList.remove('active');
+    el.classList.add('done');
+  }
+
+  async function runSimulation() {
+    if (state.running) return;
+    state.running = true;
+    resetSim();
+    runBtn.disabled = true;
+    simStatus.textContent = '运行中';
+    simStatus.className = 'sim-status sim-running';
+
+    const preset = presets[currentPreset];
+    log(`[用户] ${simPrompt.value}`, 'user');
+
+    await activate('[data-step="input"]', '→ 用户输入', '指令已进入 MCP 接入层');
+    await activate('[data-step="m-cog"]', '→ M_Cog 认知引擎', 'LLM 意图解析完成，任务分解为 ' + preset.skills.length + ' 个子任务');
+    await activate('[data-step="c-ctx"]', '→ C_Ctx 态势上下文', preset.ctx);
+    await activate('[data-step="p-proto"]', '→ P_Proto 标准化协议', '开始按拓扑顺序调度 Skill');
+
+    const skillNames = {
+      1: '流域划分', 2: 'HRU提取', 3: '关键源区识别', 4: '负荷核算',
+      5: '污染溯源', 6: '总量分配', 7: '情景优化', 8: '适应性管理', 9: 'MVR评估'
+    };
+    for (const sid of preset.skills) {
+      const el = document.querySelector(`.pipe-skill[data-skill-step="${sid}"]`);
+      await activate(el, `→ Skill ${sid} · ${skillNames[sid]}`, '已执行完毕');
+      state.latency = 30 + Math.floor(Math.random() * 60);
+      renderKpi();
+    }
+
+    await activate('[data-step="output"]', '→ 决策输出', preset.output);
+    log('[MCP] 任务完成，总耗时 ' + (preset.skills.length * 0.7 + 2.8).toFixed(1) + 's', 'success');
+
+    await wait(400);
+    await activate('[data-step="wpt"]', '→ WPT 数据回流', '日志异步汇入数据湖，触发课程化再训练');
+    state.patch += 1;
+    state.data += 0.2;
+    renderKpi();
+    log(`[WPT] 模型权重增量更新 → ${fmtVersion()}`, 'success');
+    log('[系统] 闭环完成，回到在线稳态', 'info');
+
+    simStatus.textContent = '已完成';
+    simStatus.className = 'sim-status sim-done';
+    runBtn.disabled = false;
+    state.running = false;
+  }
+
+  runBtn.addEventListener('click', runSimulation);
+
   // --- Side navigation active state ---
   const navDots = document.querySelectorAll('.nav-dot');
   const sections = [
     document.getElementById('one-body'),
     document.getElementById('dual-core-title'),
+    document.getElementById('simulator'),
     document.querySelector('.layers-section')
   ];
 
@@ -384,9 +540,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- Keyboard navigation ---
   document.addEventListener('keydown', (e) => {
+    if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
     if (e.key === '1') document.getElementById('one-body').scrollIntoView({ behavior: 'smooth' });
     if (e.key === '2') document.getElementById('dual-core-title').scrollIntoView({ behavior: 'smooth' });
-    if (e.key === '3') document.querySelector('.layers-section').scrollIntoView({ behavior: 'smooth' });
+    if (e.key === '3') document.getElementById('simulator').scrollIntoView({ behavior: 'smooth' });
+    if (e.key === '4') document.querySelector('.layers-section').scrollIntoView({ behavior: 'smooth' });
   });
 
   // --- Trigger initial visibility check ---

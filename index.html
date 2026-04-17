@@ -13,6 +13,30 @@
   <div class="header-bar"></div>
   <h1>ESS-Agent 底层架构总纲</h1>
   <p class="subtitle">"一体 · 双核 · 四层 · 九功能" 体系</p>
+
+  <!-- Live KPI Dashboard -->
+  <div class="kpi-dashboard" id="kpi-dashboard">
+    <div class="kpi-card">
+      <span class="kpi-label">系统状态</span>
+      <span class="kpi-value kpi-online"><span class="kpi-pulse"></span>在线稳态</span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-label">在线任务</span>
+      <span class="kpi-value" id="kpi-tasks">0</span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-label">处理延迟</span>
+      <span class="kpi-value" id="kpi-latency">0<span class="kpi-unit">ms</span></span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-label">WPT模型版本</span>
+      <span class="kpi-value" id="kpi-version">v0.0.0</span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-label">数据湖容量</span>
+      <span class="kpi-value" id="kpi-data">0<span class="kpi-unit">TB</span></span>
+    </div>
+  </div>
 </header>
 
 <!-- Main Architecture -->
@@ -146,6 +170,91 @@
               <p>模型权重推送、MCP热加载</p>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Workflow Simulator -->
+  <section class="simulator-section" id="simulator">
+    <h2 class="section-title">交互式演示：任务流全链路推演</h2>
+    <p class="section-subtitle">输入一个治水需求，观察 ESS-Agent 如何通过 MCP 调度 L1→L4 九大功能 Skill，完成闭环决策</p>
+
+    <div class="simulator">
+      <div class="simulator-input">
+        <label>选择任务模板：</label>
+        <div class="preset-btns">
+          <button class="preset-btn active" data-preset="water-quality">水质超标诊断</button>
+          <button class="preset-btn" data-preset="flood">生态流量预警</button>
+          <button class="preset-btn" data-preset="tmdl">TMDL削减规划</button>
+        </div>
+        <textarea id="sim-prompt" rows="2">分析A流域COD超标原因，并给出成本最优BMP组合削减方案。</textarea>
+        <div class="simulator-actions">
+          <button class="btn-run" id="sim-run">▶ 启动推演</button>
+          <button class="btn-reset" id="sim-reset">↺ 重置</button>
+          <span class="sim-status" id="sim-status">待命</span>
+        </div>
+      </div>
+
+      <div class="pipeline" id="pipeline">
+        <div class="pipe-step" data-step="input">
+          <div class="pipe-icon">📝</div>
+          <div class="pipe-title">用户输入</div>
+          <div class="pipe-detail">自然语言请求</div>
+        </div>
+        <div class="pipe-arrow"></div>
+        <div class="pipe-step" data-step="m-cog">
+          <div class="pipe-icon">🧠</div>
+          <div class="pipe-title">M 认知引擎</div>
+          <div class="pipe-detail">意图解析 · 任务分解</div>
+        </div>
+        <div class="pipe-arrow"></div>
+        <div class="pipe-step" data-step="c-ctx">
+          <div class="pipe-icon">🌐</div>
+          <div class="pipe-title">C 态势上下文</div>
+          <div class="pipe-detail">多源数据注入</div>
+        </div>
+        <div class="pipe-arrow"></div>
+        <div class="pipe-step" data-step="p-proto">
+          <div class="pipe-icon">🔀</div>
+          <div class="pipe-title">P 标准化协议</div>
+          <div class="pipe-detail">Skill 调度</div>
+        </div>
+        <div class="pipe-arrow pipe-arrow-big"></div>
+        <div class="pipe-skills" id="pipe-skills">
+          <div class="pipe-skill" data-skill-step="1"><span class="pipe-skill-id">S1</span>流域划分</div>
+          <div class="pipe-skill" data-skill-step="2"><span class="pipe-skill-id">S2</span>HRU提取</div>
+          <div class="pipe-skill" data-skill-step="3"><span class="pipe-skill-id">S3</span>源区识别</div>
+          <div class="pipe-skill" data-skill-step="4"><span class="pipe-skill-id">S4</span>负荷核算</div>
+          <div class="pipe-skill" data-skill-step="5"><span class="pipe-skill-id">S5</span>污染溯源</div>
+          <div class="pipe-skill" data-skill-step="6"><span class="pipe-skill-id">S6</span>总量分配</div>
+          <div class="pipe-skill" data-skill-step="7"><span class="pipe-skill-id">S7</span>情景优化</div>
+          <div class="pipe-skill" data-skill-step="8"><span class="pipe-skill-id">S8</span>适应管理</div>
+          <div class="pipe-skill" data-skill-step="9"><span class="pipe-skill-id">S9</span>MVR评估</div>
+        </div>
+        <div class="pipe-arrow pipe-arrow-big"></div>
+        <div class="pipe-step" data-step="output">
+          <div class="pipe-icon">📊</div>
+          <div class="pipe-title">决策输出</div>
+          <div class="pipe-detail">报告 + 策略</div>
+        </div>
+        <div class="pipe-arrow pipe-arrow-feedback"></div>
+        <div class="pipe-step pipe-wpt" data-step="wpt">
+          <div class="pipe-icon">🔄</div>
+          <div class="pipe-title">WPT 回流</div>
+          <div class="pipe-detail">DataBack · 蒸馏进化</div>
+        </div>
+      </div>
+
+      <div class="sim-console" id="sim-console">
+        <div class="console-header">
+          <span class="console-dot r"></span>
+          <span class="console-dot y"></span>
+          <span class="console-dot g"></span>
+          <span class="console-title">ESS-Agent · Runtime Console</span>
+        </div>
+        <div class="console-body" id="console-body">
+          <div class="console-line console-info">[系统] 等待任务启动...</div>
         </div>
       </div>
     </div>
@@ -334,6 +443,7 @@
 <nav class="side-nav">
   <a href="#one-body" class="nav-dot active" data-label="一体" title="一体"></a>
   <a href="#dual-core-title" class="nav-dot" data-label="双核" title="双核"></a>
+  <a href="#simulator" class="nav-dot" data-label="演示" title="交互演示"></a>
   <a href="#" class="nav-dot" data-label="四层" title="四层九功能" onclick="document.querySelector('.layers-section').scrollIntoView({behavior:'smooth'});return false;"></a>
 </nav>
 
