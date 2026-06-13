@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>黑胶架 · 我的唱片收藏</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+  <div class="brand">
+    <div class="disc" aria-hidden="true"><span class="label"></span></div>
+    <div class="brand-text">
+      <h1>黑胶架</h1>
+      <p class="subtitle">My Vinyl Collection · 个人黑胶唱片收藏与管理</p>
+    </div>
+  </div>
+  <nav class="tabs">
+    <button class="tab active" data-view="collection">收藏库</button>
+    <button class="tab" data-view="stats">统计</button>
+  </nav>
+</header>
+
+<!-- Toolbar -->
+<div class="toolbar" id="toolbar">
+  <div class="search-wrap">
+    <input type="search" id="search" placeholder="搜索 艺人 / 专辑 / 厂牌 / 标签…" autocomplete="off">
+  </div>
+  <select id="filterGenre" title="按流派筛选"><option value="">全部流派</option></select>
+  <select id="filterShelf" title="按状态筛选">
+    <option value="">全部</option>
+    <option value="owned">已收藏</option>
+    <option value="wishlist">心愿单</option>
+  </select>
+  <select id="sortBy" title="排序方式">
+    <option value="added-desc">最近添加</option>
+    <option value="added-asc">最早添加</option>
+    <option value="artist-asc">艺人 A→Z</option>
+    <option value="title-asc">专辑 A→Z</option>
+    <option value="year-desc">年份新→旧</option>
+    <option value="year-asc">年份旧→新</option>
+    <option value="rating-desc">评分高→低</option>
+    <option value="price-desc">价格高→低</option>
+  </select>
+  <div class="toolbar-spacer"></div>
+  <button class="btn ghost" id="importBtn" title="从 JSON 文件导入">导入</button>
+  <button class="btn ghost" id="exportBtn" title="导出为 JSON 备份">导出</button>
+  <button class="btn primary" id="addBtn">＋ 添加唱片</button>
+  <input type="file" id="importFile" accept="application/json" hidden>
+</div>
+
+<!-- Collection View -->
+<main class="main" id="view-collection">
+  <div class="result-bar">
+    <span id="resultCount">0 张</span>
+    <div class="layout-toggle">
+      <button class="lt active" data-layout="grid" title="网格视图">▦</button>
+      <button class="lt" data-layout="list" title="列表视图">≣</button>
+    </div>
+  </div>
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="empty" hidden>
+    <div class="empty-disc">◉</div>
+    <h2>架子还空着</h2>
+    <p>点击右上角「＋ 添加唱片」开始建立你的黑胶收藏。</p>
+    <button class="btn primary" id="emptyAddBtn">＋ 添加第一张</button>
+  </div>
+</main>
+
+<!-- Stats View -->
+<main class="main" id="view-stats" hidden>
+  <div class="stat-cards" id="statCards"></div>
+  <div class="stat-panels">
+    <section class="panel">
+      <h3>按流派分布</h3>
+      <div class="bars" id="byGenre"></div>
+    </section>
+    <section class="panel">
+      <h3>按年代分布</h3>
+      <div class="bars" id="byDecade"></div>
+    </section>
+  </div>
+</main>
+
+<!-- Add / Edit Modal -->
+<div class="modal-backdrop" id="formModal" hidden>
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-head">
+      <h2 id="formTitle">添加唱片</h2>
+      <button class="icon-btn" id="formClose" aria-label="关闭">✕</button>
+    </div>
+    <form id="recordForm" class="modal-body">
+      <input type="hidden" id="f-id">
+      <div class="cover-edit">
+        <div class="cover-preview" id="coverPreview"><span>封面</span></div>
+        <div class="cover-actions">
+          <label class="btn ghost small">上传封面<input type="file" id="f-coverFile" accept="image/*" hidden></label>
+          <input type="url" id="f-coverUrl" placeholder="或粘贴封面图片链接 https://…">
+          <button type="button" class="link-btn" id="coverClear">清除封面</button>
+        </div>
+      </div>
+      <div class="form-grid">
+        <label class="full">艺人 / 乐队 <span class="req">*</span>
+          <input type="text" id="f-artist" required placeholder="如：Pink Floyd">
+        </label>
+        <label class="full">专辑标题 <span class="req">*</span>
+          <input type="text" id="f-title" required placeholder="如：The Dark Side of the Moon">
+        </label>
+        <label>发行年份
+          <input type="number" id="f-year" min="1880" max="2099" placeholder="1973">
+        </label>
+        <label>流派
+          <input type="text" id="f-genre" list="genreList" placeholder="Rock / Jazz / 古典…">
+          <datalist id="genreList"></datalist>
+        </label>
+        <label>厂牌 Label
+          <input type="text" id="f-label" placeholder="Harvest / Blue Note…">
+        </label>
+        <label>规格
+          <select id="f-format">
+            <option value="LP">LP（12寸）</option>
+            <option value="EP">EP</option>
+            <option value="Single">Single（7寸）</option>
+            <option value="10″">10寸</option>
+            <option value="Box">套装 Box</option>
+            <option value="Other">其他</option>
+          </select>
+        </label>
+        <label>转速
+          <select id="f-speed">
+            <option value="33⅓">33⅓ RPM</option>
+            <option value="45">45 RPM</option>
+            <option value="78">78 RPM</option>
+          </select>
+        </label>
+        <label>品相 Condition
+          <select id="f-condition">
+            <option value="M">M 全新</option>
+            <option value="NM">NM 近全新</option>
+            <option value="VG+">VG+ 优</option>
+            <option value="VG">VG 良</option>
+            <option value="G">G 一般</option>
+            <option value="P">P 差</option>
+          </select>
+        </label>
+        <label>购入日期
+          <input type="date" id="f-purchaseDate">
+        </label>
+        <label>购入价格
+          <input type="number" id="f-price" min="0" step="0.01" placeholder="0.00">
+        </label>
+        <label>评分
+          <div class="star-input" id="starInput">
+            <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
+          </div>
+          <input type="hidden" id="f-rating" value="0">
+        </label>
+        <label class="full">标签（逗号分隔）
+          <input type="text" id="f-tags" placeholder="经典摇滚, 头版, 黑胶圈友赠送">
+        </label>
+        <label class="full">备注
+          <textarea id="f-notes" rows="3" placeholder="版本、出处、保养情况、试听感受…"></textarea>
+        </label>
+        <label class="full checkbox">
+          <input type="checkbox" id="f-wishlist"> 这是心愿单（还没入手）
+        </label>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="btn danger ghost" id="deleteBtn" hidden>删除</button>
+        <div class="toolbar-spacer"></div>
+        <button type="button" class="btn ghost" id="cancelBtn">取消</button>
+        <button type="submit" class="btn primary">保存</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Detail Modal -->
+<div class="modal-backdrop" id="detailModal" hidden>
+  <div class="modal detail" role="dialog" aria-modal="true">
+    <button class="icon-btn detail-close" id="detailClose" aria-label="关闭">✕</button>
+    <div class="detail-body" id="detailBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<footer class="footer">黑胶架 · 数据仅保存在本机浏览器（localStorage），记得定期「导出」备份。</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
