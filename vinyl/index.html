@@ -26,7 +26,7 @@
 <!-- Toolbar -->
 <div class="toolbar" id="toolbar">
   <div class="search-wrap">
-    <input type="search" id="search" placeholder="搜索 艺人 / 专辑 / 厂牌 / 标签…" autocomplete="off">
+    <input type="search" id="search" placeholder="在收藏里搜索 艺人 / 专辑 / 厂牌 / 标签…" autocomplete="off">
   </div>
   <select id="filterGenre" title="按流派筛选"><option value="">全部流派</option></select>
   <select id="filterShelf" title="按状态筛选">
@@ -91,7 +91,45 @@
       <h2 id="formTitle">添加唱片</h2>
       <button class="icon-btn" id="formClose" aria-label="关闭">✕</button>
     </div>
-    <form id="recordForm" class="modal-body">
+
+    <!-- entry method tabs -->
+    <div class="entry-tabs" id="entryTabs">
+      <button class="etab active" data-tab="manual">✍️ 手动写入</button>
+      <button class="etab" data-tab="search">🔎 智能搜索</button>
+      <button class="etab" data-tab="scan">📷 扫码识别</button>
+    </div>
+
+    <!-- Smart search panel -->
+    <section class="entry-panel" id="panel-search" hidden>
+      <p class="entry-hint">输入专辑名或「艺人 专辑」，从在线曲库自动带回封面与资料。</p>
+      <div class="search-row">
+        <input type="text" id="mbQuery" placeholder="如：Pink Floyd Dark Side of the Moon">
+        <button type="button" class="btn primary" id="mbSearchBtn">搜索</button>
+      </div>
+      <div class="mb-results" id="mbResults"></div>
+    </section>
+
+    <!-- Scan panel -->
+    <section class="entry-panel" id="panel-scan" hidden>
+      <p class="entry-hint">把唱片背面的条形码对准摄像头自动识别；不支持时可手动输入条码查询。</p>
+      <div class="scan-stage">
+        <video id="scanVideo" playsinline muted></video>
+        <div class="scan-overlay"><div class="scan-line"></div></div>
+      </div>
+      <div class="scan-controls">
+        <button type="button" class="btn" id="scanStartBtn">开启摄像头</button>
+        <button type="button" class="btn ghost" id="scanStopBtn" hidden>停止</button>
+      </div>
+      <div class="search-row">
+        <input type="text" id="barcodeInput" inputmode="numeric" placeholder="或手动输入条码（EAN/UPC）">
+        <button type="button" class="btn" id="barcodeLookupBtn">查询</button>
+      </div>
+      <div class="scan-msg" id="scanMsg"></div>
+      <div class="mb-results" id="scanResults"></div>
+    </section>
+
+    <!-- Manual form -->
+    <form id="recordForm" class="modal-body entry-panel" data-tab="manual">
       <input type="hidden" id="f-id">
       <div class="cover-edit">
         <div class="cover-preview" id="coverPreview"><span>封面</span></div>
@@ -160,8 +198,11 @@
         <label class="full">标签（逗号分隔）
           <input type="text" id="f-tags" placeholder="经典摇滚, 头版, 黑胶圈友赠送">
         </label>
-        <label class="full">备注
-          <textarea id="f-notes" rows="3" placeholder="版本、出处、保养情况、试听感受…"></textarea>
+        <label class="full">🎧 碟评 / 听感乐评
+          <textarea id="f-review" rows="3" placeholder="录音、母带、演绎、声场、最爱的曲目……写下你的听后感。"></textarea>
+        </label>
+        <label class="full">备注（收藏信息）
+          <textarea id="f-notes" rows="2" placeholder="版本、出处、保养情况、序列号…"></textarea>
         </label>
         <label class="full checkbox">
           <input type="checkbox" id="f-wishlist"> 这是心愿单（还没入手）
@@ -187,7 +228,7 @@
 
 <div class="toast" id="toast" hidden></div>
 
-<footer class="footer">黑胶架 · 数据仅保存在本机浏览器（localStorage），记得定期「导出」备份。</footer>
+<footer class="footer">黑胶架 · 数据保存在本机浏览器；封面与资料来自开放曲库 MusicBrainz / Cover Art Archive。记得定期「导出」备份。</footer>
 
 <script src="app.js"></script>
 </body>
